@@ -13,8 +13,14 @@ namespace CashRegisterKata
         {
             decimal input = GetDecimal();
             CashRegister cr = new CashRegister();
-
             Console.WriteLine(cr.ProcessChange(input));
+            Console.WriteLine(cr.ProcessRandomChange(input));
+            Console.ReadKey();
+            Console.WriteLine(cr.ProcessRandomChange(input));
+            Console.ReadKey();
+            Console.WriteLine(cr.ProcessRandomChange(input));
+            Console.ReadKey();
+            Console.WriteLine(cr.ProcessRandomChange(input));
             Console.ReadKey();
 
         }
@@ -46,6 +52,14 @@ namespace CashRegisterKata
     class CashRegister
     {
         private Currency[] myCurrencies;
+        
+        private void ResetCounts()
+        {
+            for(int i = 0; i < myCurrencies.Length;i++)
+            {
+                myCurrencies[i].Count = 0;
+            }
+        }
 
         public CashRegister(Currency[] currencies)
         {
@@ -76,26 +90,25 @@ namespace CashRegisterKata
 
         public string ProcessChange(decimal input)
         {
-           
-            int[] count = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            ResetCounts();
             string result = "";
             for (int i = 0; i < this.myCurrencies.Length; i++)
             {
-                count[i] = (int)decimal.Floor(input / this.myCurrencies[i].Amount);
-                input -= this.myCurrencies[i].Amount * count[i];
+                this.myCurrencies[i].Count = (int)decimal.Floor(input / this.myCurrencies[i].Amount);
+                input -= this.myCurrencies[i].Amount * this.myCurrencies[i].Count;
             }
             result += "You Received :";
             for (int i = 0; i < this.myCurrencies.Length; i++)
             {
-                if (count[i] > 0)
+                if (this.myCurrencies[i].Count > 0)
                 {
-                    if (count[i] == 1)
+                    if (this.myCurrencies[i].Count == 1)
                     {
-                        result += " " + count[i] + " " + this.myCurrencies[i].Singular;
+                        result += " " + this.myCurrencies[i].Count + " " + this.myCurrencies[i].Singular;
                     }
                     else
                     {
-                        result += " " + count[i] + " " + this.myCurrencies[i].Plural;
+                        result += " " + this.myCurrencies[i].Count + " " + this.myCurrencies[i].Plural;
                     }
                 }
             }
@@ -103,9 +116,37 @@ namespace CashRegisterKata
             return result;
         }
 
+        public string ProcessRandomChange(decimal input)
+        {
+            ResetCounts();
+            string result = "";
+            Currency curr;
+            while(input > 0)
+            {
+                curr = GetRandomCurrencyForChange(input);
+                input -= curr.Amount;
+            }
+            result += "\nYou Received :";
+            for (int i = 0; i < this.myCurrencies.Length; i++)
+            {
+                if (this.myCurrencies[i].Count > 0)
+                {
+                    if (this.myCurrencies[i].Count == 1)
+                    {
+                        result += " " + this.myCurrencies[i].Count + " " + this.myCurrencies[i].Singular;
+                    }
+                    else
+                    {
+                        result += " " + this.myCurrencies[i].Count + " " + this.myCurrencies[i].Plural;
+                    }
+                }
+            }
+            return result;
+        }
+
         public Currency GetRandomCurrencyForChange(decimal change)
         {
-            Currency result = new Currency();
+            
             Random rnd = new Random();
             int i = 0;
             while (change < this.myCurrencies[i].Amount && i < this.myCurrencies.Length)
@@ -113,8 +154,8 @@ namespace CashRegisterKata
                 i++;
             }
             int rndIDX = rnd.Next(this.myCurrencies.Length - i) + i;
-            result = this.myCurrencies[rndIDX];
-            return result;
+            this.myCurrencies[rndIDX].Count++;
+            return this.myCurrencies[rndIDX]; ;
         }
     }
 
@@ -167,6 +208,12 @@ namespace CashRegisterKata
         {
             get { return this.value; }
             set { this.value = value; }
+        }
+
+        public int Count
+        {
+            get { return this.count; }
+            set { this.count = value; }
         }
         public override bool Equals(object obj)
         {
