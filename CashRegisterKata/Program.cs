@@ -27,48 +27,10 @@ namespace CashRegisterKata
             decimal[] denoms = { 20m, 10m, 5m, 1m, .25m, .1m, .05m, .01m };
             int[] count = { 0, 0, 0, 0, 0, 0, 0, 0 };
             string result = "";
-            while (input > 0m)
+            for(int i = 0; i < 8; i++)
             {
-                if(input > 20m)
-                {
-                    count[0]++;
-                    input -= 20m;
-                }
-                else if(input > 10m)
-                {
-                    count[1]++;
-                    input -= 10m;
-
-                }
-                else if(input >5m)
-                {
-                    count[2]++;
-                    input -= 5m;
-                }
-                else if(input > 1m)
-                {
-                    count[3]++;
-                    input -= 1m;
-                }
-                else if (input > .25m)
-                {
-                    count[4]++;
-                    input -= .25m;
-                }else if(input >.10m)
-                {
-                    count[5]++;
-                    input -= .10m;
-                }
-                else if(input > .05m)
-                {
-                    count[6]++;
-                    input -= .05m;
-                }
-                else
-                {
-                    count[7]++;
-                    input -= .01m;
-                }
+                count[i] =(int) decimal.Floor(input / denoms[i]);
+                input -= 1m * count[i] * denoms[i];
             }
             result += "You Received :";
             for(int i= 0;i< 8;i++)
@@ -77,12 +39,12 @@ namespace CashRegisterKata
                 {
                     if(count[i]==1)
                     {
-                        result += count[i] + " " + names[i, 0];
+                        result +=" " + count[i] + " " + names[i, 0];
                         //Console.Write("{0} {1},", count[i], names[i, 0]);
                     }
                     else
                     {
-                        result +=count[i] + " " + names[i, 1];
+                        result += " " + count[i] + " " + names[i, 1];
                         //Console.Write("{0} {1},", count[i], names[i, 1]);
                     }
                 }
